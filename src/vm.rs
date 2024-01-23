@@ -93,6 +93,8 @@ impl NodeMachine {
     }
 
     pub fn execute(&mut self) {
+        println!("{:?}", self.byte_code);
+        println!("{} bytes", self.byte_code.len());
         while self.pc < self.byte_code.len() {
             let opcode = self.byte_code[self.pc];
             match opcode {
@@ -386,8 +388,56 @@ impl NodeMachine {
 
                     self.stack.push_back(res);
                 }
+                0x5C => {
+                    let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
+                    let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
+                    let res = if a == b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x5D => {
+                    let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
+                    let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
+                    let res = if a != b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x5E => {
+                    let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
+                    let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
+                    let res = if a < b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x5F => {
+                    let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
+                    let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
+                    let res = if a <= b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x60 => {
+                    let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
+                    let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
+                    let res = if a > b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x61 => {
+                    let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
+                    let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
+                    let res = if a >= b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
                 _ => {
-                    println!("unrecognized opcode! halting");
+                    println!("unrecognized opcode {opcode} !!! halting");
                     break;
                 }
             }

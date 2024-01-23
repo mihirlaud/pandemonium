@@ -1,9 +1,33 @@
 node HelloKarma {
 
-    fn main() -> float {
-        var a: float = 1.0;
-        var b: float = 3.0;
+    fn sqrt(num: float) -> float {
+        var start: float = 0.0;
+        var end: float = num;
 
-        return a / b;
+        var ans: float = 0.0;
+        var mid: float = 0.0;
+
+        while start <= end {
+            mid = (start + end) / 2.0;
+
+            if (mid * mid) < num + 0.1 && (mid * mid) > num - 0.1 {
+                ans = mid;
+                start = end + 1.0;
+            } else {
+                if (mid * mid) >= num + 0.1 {
+                    end = mid;
+                } else {
+                    start = mid;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    fn main() -> float {
+        var number: float = 100.0;
+        
+        return sqrt(number);
     }
 }
