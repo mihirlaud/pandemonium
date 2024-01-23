@@ -19,7 +19,6 @@ impl VirtualMachine {
 
         let graph: HashMap<String, Vec<String>> =
             serde_json::from_str(&buffer).expect("could not convert from json");
-        println!("{:?}", graph);
 
         let mut ids: HashMap<String, usize> = HashMap::new();
         let mut nodes = vec![];
@@ -121,7 +120,14 @@ impl NodeMachine {
                     self.stack.pop_back();
                 }
                 0x13 => {
-                    self.stack.push_back(self.pc as u32);
+                    let offset: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    self.stack.push_back(self.pc as u32 + offset);
+
+                    self.pc += 4;
                 }
                 0x20 => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -129,10 +135,12 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let addition = addr + 4 - self.memory.len() as u32;
+                    if addr + 4 > self.memory.len() as u32 {
+                        let addition = addr + 4 - self.memory.len() as u32;
 
-                    for _ in 0..addition {
-                        self.memory.push(0);
+                        for _ in 0..addition {
+                            self.memory.push(0);
+                        }
                     }
 
                     self.pc += 4;
@@ -143,10 +151,12 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let addition = addr + 4 - self.memory.len() as u32;
+                    if addr + 4 > self.memory.len() as u32 {
+                        let addition = addr + 4 - self.memory.len() as u32;
 
-                    for _ in 0..addition {
-                        self.memory.push(0);
+                        for _ in 0..addition {
+                            self.memory.push(0);
+                        }
                     }
 
                     self.pc += 4;
@@ -349,7 +359,18 @@ impl NodeMachine {
                     self.pc -= 1;
                 }
                 0x5B => {
-                    self.pc = self.byte_code.len() + 1;
+                    let res = self.stack.pop_back().unwrap();
+
+                    match self.stack.pop_back() {
+                        Some(i) => {
+                            self.pc = i as usize - 1;
+                        }
+                        None => {
+                            self.pc = self.byte_code.len();
+                        }
+                    }
+
+                    self.stack.push_back(res);
                 }
                 _ => {
                     println!("unrecognized opcode! halting");
