@@ -107,10 +107,12 @@ impl NodeMachine {
                     self.pc += 4;
                 }
                 0x11 => {
-                    let data: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
-                        | ((self.byte_code[self.pc + 2] as u32) << 16)
-                        | ((self.byte_code[self.pc + 3] as u32) << 8)
-                        | (self.byte_code[self.pc + 4] as u32);
+                    let data = u32::from_be_bytes([
+                        self.byte_code[self.pc + 1],
+                        self.byte_code[self.pc + 2],
+                        self.byte_code[self.pc + 3],
+                        self.byte_code[self.pc + 4],
+                    ]);
 
                     self.stack.push_back(data);
 
@@ -231,8 +233,11 @@ impl NodeMachine {
                 }
                 0x31 => {
                     let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
                     let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
                     let res = a + b;
+                    let res = u32::from_be_bytes(res.to_be_bytes());
                     self.stack.push_back(res);
                 }
                 0x32 => {
@@ -243,8 +248,11 @@ impl NodeMachine {
                 }
                 0x33 => {
                     let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
                     let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
                     let res = a - b;
+                    let res = u32::from_be_bytes(res.to_be_bytes());
                     self.stack.push_back(res);
                 }
                 0x34 => {
@@ -255,8 +263,11 @@ impl NodeMachine {
                 }
                 0x35 => {
                     let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
                     let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
                     let res = a * b;
+                    let res = u32::from_be_bytes(res.to_be_bytes());
                     self.stack.push_back(res);
                 }
                 0x36 => {
@@ -267,8 +278,11 @@ impl NodeMachine {
                 }
                 0x37 => {
                     let b = self.stack.pop_back().unwrap();
+                    let b = f32::from_be_bytes(b.to_be_bytes());
                     let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
                     let res = a / b;
+                    let res = u32::from_be_bytes(res.to_be_bytes());
                     self.stack.push_back(res);
                 }
                 0x50 => {

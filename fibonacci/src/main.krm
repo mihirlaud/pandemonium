@@ -1,22 +1,9 @@
 node HelloKarma {
 
-    fn main() -> int {
-        var a: int = 0;
-        var b: int = 1;
-        var n: int = 31;
+    fn main() -> float {
+        var a: float = 1.0;
+        var b: float = 3.0;
 
-        while n > 0 {
-            var c: int = a + b;
-            a = b;
-            b = c;
-
-            n = decrement(n);
-        }
-
-        return a;
-    }
-
-    fn decrement(n: int) -> int {
-        return n - 1;
+        return a / b;
     }
 }
