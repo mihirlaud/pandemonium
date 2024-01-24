@@ -10,11 +10,11 @@ node HelloKarma {
         while start <= end {
             mid = (start + end) / 2.0;
 
-            if (mid * mid) < num + 0.1 && (mid * mid) > num - 0.1 {
+            if (mid * mid) < num + 0.001 && (mid * mid) > num - 0.001 {
                 ans = mid;
                 start = end + 1.0;
             } else {
-                if (mid * mid) >= num + 0.1 {
+                if (mid * mid) >= num + 0.001 {
                     end = mid;
                 } else {
                     start = mid;

@@ -56,13 +56,6 @@ pub struct NodeGraph {
 }
 
 impl NodeGraph {
-    pub fn new() -> Self {
-        Self {
-            nodes: vec![],
-            adj_list: HashMap::new(),
-        }
-    }
-
     pub fn from(nodes: Vec<NodeMachine>, adj_list: HashMap<usize, Vec<usize>>) -> Self {
         Self { nodes, adj_list }
     }
@@ -132,6 +125,20 @@ impl NodeMachine {
                     self.stack.push_back(self.pc as u32 + offset);
 
                     self.pc += 4;
+                }
+                0x14 => {
+                    let data = self.byte_code[self.pc + 1] as u32;
+
+                    self.stack.push_back(data);
+
+                    self.pc += 1;
+                }
+                0x15 => {
+                    let data = self.byte_code[self.pc + 1] as u32;
+
+                    self.stack.push_back(data);
+
+                    self.pc += 1;
                 }
                 0x20 => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -227,6 +234,86 @@ impl NodeMachine {
                 }
                 0x26 => {}
                 0x27 => {}
+                0x28 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    if addr + 1 > self.memory.len() as u32 {
+                        let addition = addr + 1 - self.memory.len() as u32;
+
+                        for _ in 0..addition {
+                            self.memory.push(0);
+                        }
+                    }
+
+                    self.pc += 4;
+                }
+                0x29 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let data = self.memory[addr as usize] as u32;
+
+                    self.stack.push_back(data);
+
+                    self.pc += 4;
+                }
+                0x2A => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let data = self.stack.pop_back().unwrap();
+
+                    self.memory[addr as usize] = (data & 0xFF) as u8;
+
+                    self.pc += 4;
+                }
+                0x2C => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    if addr + 1 > self.memory.len() as u32 {
+                        let addition = addr + 1 - self.memory.len() as u32;
+
+                        for _ in 0..addition {
+                            self.memory.push(0);
+                        }
+                    }
+
+                    self.pc += 4;
+                }
+                0x2D => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let data = self.memory[addr as usize] as u32;
+
+                    self.stack.push_back(data);
+
+                    self.pc += 4;
+                }
+                0x2E => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let data = self.stack.pop_back().unwrap();
+
+                    self.memory[addr as usize] = (data & 0xFF) as u8;
+
+                    self.pc += 4;
+                }
                 0x30 => {
                     let b = self.stack.pop_back().unwrap();
                     let a = self.stack.pop_back().unwrap();
@@ -285,6 +372,18 @@ impl NodeMachine {
                     let a = f32::from_be_bytes(a.to_be_bytes());
                     let res = a / b;
                     let res = u32::from_be_bytes(res.to_be_bytes());
+                    self.stack.push_back(res);
+                }
+                0x38 => {
+                    let b = self.stack.pop_back().unwrap();
+                    let a = self.stack.pop_back().unwrap();
+                    let res = a + b;
+                    self.stack.push_back(res);
+                }
+                0x39 => {
+                    let b = self.stack.pop_back().unwrap();
+                    let a = self.stack.pop_back().unwrap();
+                    let res = a - b;
                     self.stack.push_back(res);
                 }
                 0x50 => {
@@ -436,6 +535,42 @@ impl NodeMachine {
                     let res = if a >= b { 1 } else { 0 };
                     self.stack.push_back(res);
                 }
+                0x62 => {
+                    let b = self.stack.pop_back().unwrap() == 1;
+                    let a = self.stack.pop_back().unwrap() == 1;
+                    let res = if a == b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x63 => {
+                    let b = self.stack.pop_back().unwrap() == 1;
+                    let a = self.stack.pop_back().unwrap() == 1;
+                    let res = if a != b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x64 => {
+                    let b = self.stack.pop_back().unwrap() == 1;
+                    let a = self.stack.pop_back().unwrap() == 1;
+                    let res = if a < b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x65 => {
+                    let b = self.stack.pop_back().unwrap() == 1;
+                    let a = self.stack.pop_back().unwrap() == 1;
+                    let res = if a <= b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x66 => {
+                    let b = self.stack.pop_back().unwrap() == 1;
+                    let a = self.stack.pop_back().unwrap() == 1;
+                    let res = if a > b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
+                0x67 => {
+                    let b = self.stack.pop_back().unwrap() == 1;
+                    let a = self.stack.pop_back().unwrap() == 1;
+                    let res = if a >= b { 1 } else { 0 };
+                    self.stack.push_back(res);
+                }
                 _ => {
                     println!("unrecognized opcode {opcode} !!! halting");
                     break;
@@ -444,5 +579,6 @@ impl NodeMachine {
             self.pc += 1;
         }
         println!("{:?}", self.stack);
+        println!("{:?}", self.memory);
     }
 }
