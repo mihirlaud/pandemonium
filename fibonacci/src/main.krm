@@ -1,4 +1,22 @@
 node HelloKarma {
+    fn decrement(n: int) -> int {
+        return n - 1;
+    }
+
+    fn fibonacci(nth: int) -> int {
+        var a: int = 0;
+        var b: int = 1;
+
+        while nth > 0 {
+            var temp: int = a + b;
+            a = b;
+            b = temp;
+
+            nth = decrement(nth);
+        }
+
+        return a;
+    }
 
     fn sqrt(num: float) -> float {
         var start: float = 0.0;
@@ -25,9 +43,15 @@ node HelloKarma {
         return ans;
     }
 
-    fn main() -> float {
-        var number: float = 100.0;
+    fn main() -> int {
+        var number: float = 1.0;
+
+        while number <= 10.0 {
+            var op: int = print_float(sqrt(number));
+
+            number = number + 1.0;
+        }
         
-        return sqrt(number);
+        return 0;
     }
 }

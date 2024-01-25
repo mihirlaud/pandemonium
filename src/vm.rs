@@ -88,6 +88,7 @@ impl NodeMachine {
     pub fn execute(&mut self) {
         println!("{:?}", self.byte_code);
         println!("{} bytes", self.byte_code.len());
+        println!("BEGIN PROGRAM OUTPUT -------");
         while self.pc < self.byte_code.len() {
             let opcode = self.byte_code[self.pc];
             match opcode {
@@ -571,6 +572,25 @@ impl NodeMachine {
                     let res = if a >= b { 1 } else { 0 };
                     self.stack.push_back(res);
                 }
+                0x90 => {
+                    let a = self.stack.pop_back().unwrap();
+                    let a = i32::from_be_bytes(a.to_be_bytes());
+                    println!("{a}");
+                }
+                0x91 => {
+                    let a = self.stack.pop_back().unwrap();
+                    let a = f32::from_be_bytes(a.to_be_bytes());
+                    println!("{a}");
+                }
+                0x92 => {
+                    let a = self.stack.pop_back().unwrap() != 0;
+                    println!("{}", if a { "true" } else { "false" });
+                }
+                0x93 => {
+                    let a = self.stack.pop_back().unwrap();
+                    let a = (a as u8) as char;
+                    println!("{a}");
+                }
                 _ => {
                     println!("unrecognized opcode {opcode} !!! halting");
                     break;
@@ -578,7 +598,7 @@ impl NodeMachine {
             }
             self.pc += 1;
         }
-        println!("{:?}", self.stack);
-        println!("{:?}", self.memory);
+        // println!("{:?}", self.stack);
+        // println!("{:?}", self.memory);
     }
 }
