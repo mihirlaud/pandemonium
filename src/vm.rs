@@ -91,6 +91,7 @@ impl NodeMachine {
         println!("BEGIN PROGRAM OUTPUT -------");
         while self.pc < self.byte_code.len() {
             let opcode = self.byte_code[self.pc];
+            // println!("{opcode}");
             match opcode {
                 0x10 => {
                     let data: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -572,6 +573,189 @@ impl NodeMachine {
                     let res = if a >= b { 1 } else { 0 };
                     self.stack.push_back(res);
                 }
+                0x80 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let type_len: u32 = self.byte_code[self.pc + 5] as u32;
+
+                    let arr_len: u32 = ((self.byte_code[self.pc + 6] as u32) << 24)
+                        | ((self.byte_code[self.pc + 7] as u32) << 16)
+                        | ((self.byte_code[self.pc + 8] as u32) << 8)
+                        | (self.byte_code[self.pc + 9] as u32);
+
+                    if addr + type_len * arr_len > self.memory.len() as u32 {
+                        let addition = addr + type_len * arr_len - self.memory.len() as u32;
+
+                        for _ in 0..addition {
+                            self.memory.push(0);
+                        }
+                    }
+
+                    self.pc += 9;
+                }
+                0x82 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
+                        | ((self.byte_code[self.pc + 6] as u32) << 16)
+                        | ((self.byte_code[self.pc + 7] as u32) << 8)
+                        | (self.byte_code[self.pc + 8] as u32);
+
+                    let addr = addr + 4 * idx;
+
+                    let data = (self.memory[addr as usize] as u32) << 24
+                        | (self.memory[addr as usize + 1] as u32) << 16
+                        | (self.memory[addr as usize + 2] as u32) << 8
+                        | (self.memory[addr as usize + 3] as u32);
+
+                    self.stack.push_back(data);
+
+                    self.pc += 8;
+                }
+                0x83 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
+                        | ((self.byte_code[self.pc + 6] as u32) << 16)
+                        | ((self.byte_code[self.pc + 7] as u32) << 8)
+                        | (self.byte_code[self.pc + 8] as u32);
+
+                    let addr = addr + 4 * idx;
+
+                    let data = (self.memory[addr as usize] as u32) << 24
+                        | (self.memory[addr as usize + 1] as u32) << 16
+                        | (self.memory[addr as usize + 2] as u32) << 8
+                        | (self.memory[addr as usize + 3] as u32);
+
+                    self.stack.push_back(data);
+
+                    self.pc += 8;
+                }
+                0x84 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
+                        | ((self.byte_code[self.pc + 6] as u32) << 16)
+                        | ((self.byte_code[self.pc + 7] as u32) << 8)
+                        | (self.byte_code[self.pc + 8] as u32);
+
+                    let addr = addr + idx;
+
+                    let data = self.memory[addr as usize] as u32;
+
+                    self.stack.push_back(data);
+
+                    self.pc += 8;
+                }
+                0x85 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
+                        | ((self.byte_code[self.pc + 6] as u32) << 16)
+                        | ((self.byte_code[self.pc + 7] as u32) << 8)
+                        | (self.byte_code[self.pc + 8] as u32);
+
+                    let addr = addr + idx;
+
+                    let data = self.memory[addr as usize] as u32;
+
+                    self.stack.push_back(data);
+
+                    self.pc += 8;
+                }
+                0x87 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
+                        | ((self.byte_code[self.pc + 6] as u32) << 16)
+                        | ((self.byte_code[self.pc + 7] as u32) << 8)
+                        | (self.byte_code[self.pc + 8] as u32);
+
+                    let data = self.stack.pop_back().unwrap();
+                    let addr = addr + idx * 4;
+
+                    self.memory[addr as usize] = ((data & 0xFF000000) >> 24) as u8;
+                    self.memory[addr as usize + 1] = ((data & 0x00FF0000) >> 16) as u8;
+                    self.memory[addr as usize + 2] = ((data & 0x0000FF00) >> 8) as u8;
+                    self.memory[addr as usize + 3] = (data & 0x000000FF) as u8;
+
+                    self.pc += 8;
+                }
+                0x88 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
+                        | ((self.byte_code[self.pc + 6] as u32) << 16)
+                        | ((self.byte_code[self.pc + 7] as u32) << 8)
+                        | (self.byte_code[self.pc + 8] as u32);
+
+                    let data = self.stack.pop_back().unwrap();
+                    let addr = addr + idx * 4;
+
+                    self.memory[addr as usize] = ((data & 0xFF000000) >> 24) as u8;
+                    self.memory[addr as usize + 1] = ((data & 0x00FF0000) >> 16) as u8;
+                    self.memory[addr as usize + 2] = ((data & 0x0000FF00) >> 8) as u8;
+                    self.memory[addr as usize + 3] = (data & 0x000000FF) as u8;
+
+                    self.pc += 8;
+                }
+                0x89 => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
+                        | ((self.byte_code[self.pc + 6] as u32) << 16)
+                        | ((self.byte_code[self.pc + 7] as u32) << 8)
+                        | (self.byte_code[self.pc + 8] as u32);
+
+                    let data = self.stack.pop_back().unwrap();
+                    let addr = addr + idx;
+
+                    self.memory[addr as usize] = data as u8;
+
+                    self.pc += 8;
+                }
+                0x8A => {
+                    let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
+                        | ((self.byte_code[self.pc + 2] as u32) << 16)
+                        | ((self.byte_code[self.pc + 3] as u32) << 8)
+                        | (self.byte_code[self.pc + 4] as u32);
+
+                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
+                        | ((self.byte_code[self.pc + 6] as u32) << 16)
+                        | ((self.byte_code[self.pc + 7] as u32) << 8)
+                        | (self.byte_code[self.pc + 8] as u32);
+
+                    let data = self.stack.pop_back().unwrap();
+                    let addr = addr + idx;
+
+                    self.memory[addr as usize] = data as u8;
+
+                    self.pc += 8;
+                }
                 0x90 => {
                     let a = self.stack.pop_back().unwrap();
                     let a = i32::from_be_bytes(a.to_be_bytes());
@@ -598,7 +782,7 @@ impl NodeMachine {
             }
             self.pc += 1;
         }
-        // println!("{:?}", self.stack);
-        // println!("{:?}", self.memory);
+        println!("{:?}", self.stack);
+        println!("{:?}", self.memory);
     }
 }

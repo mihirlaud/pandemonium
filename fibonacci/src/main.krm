@@ -1,57 +1,10 @@
 node HelloKarma {
-    fn decrement(n: int) -> int {
-        return n - 1;
-    }
 
-    fn fibonacci(nth: int) -> int {
-        var a: int = 0;
-        var b: int = 1;
+    fn main() -> char {
+        var arr: [char; 5] = ['H', 'e', 'l', 'l', 'o'];
 
-        while nth > 0 {
-            var temp: int = a + b;
-            a = b;
-            b = temp;
-
-            nth = decrement(nth);
-        }
-
-        return a;
-    }
-
-    fn sqrt(num: float) -> float {
-        var start: float = 0.0;
-        var end: float = num;
-
-        var ans: float = 0.0;
-        var mid: float = 0.0;
-
-        while start <= end {
-            mid = (start + end) / 2.0;
-
-            if (mid * mid) < num + 0.001 && (mid * mid) > num - 0.001 {
-                ans = mid;
-                start = end + 1.0;
-            } else {
-                if (mid * mid) >= num + 0.001 {
-                    end = mid;
-                } else {
-                    start = mid;
-                }
-            }
-        }
-
-        return ans;
-    }
-
-    fn main() -> int {
-        var number: float = 1.0;
-
-        while number <= 10.0 {
-            var op: int = print_float(sqrt(number));
-
-            number = number + 1.0;
-        }
+        arr[3] = 'p';
         
-        return 0;
+        return arr[3];
     }
 }
