@@ -549,30 +549,14 @@ impl NodeMachine {
                     let res = if a != b { 1 } else { 0 };
                     self.stack.push_back(res);
                 }
-                0x64 => {
-                    let b = self.stack.pop_back().unwrap() == 1;
-                    let a = self.stack.pop_back().unwrap() == 1;
-                    let res = if a < b { 1 } else { 0 };
-                    self.stack.push_back(res);
-                }
-                0x65 => {
-                    let b = self.stack.pop_back().unwrap() == 1;
-                    let a = self.stack.pop_back().unwrap() == 1;
-                    let res = if a <= b { 1 } else { 0 };
-                    self.stack.push_back(res);
-                }
-                0x66 => {
-                    let b = self.stack.pop_back().unwrap() == 1;
-                    let a = self.stack.pop_back().unwrap() == 1;
-                    let res = if a > b { 1 } else { 0 };
-                    self.stack.push_back(res);
-                }
-                0x67 => {
-                    let b = self.stack.pop_back().unwrap() == 1;
-                    let a = self.stack.pop_back().unwrap() == 1;
-                    let res = if a >= b { 1 } else { 0 };
-                    self.stack.push_back(res);
-                }
+                0x64 => match self.stack.pop_back() {
+                    Some(i) => {
+                        self.pc = i as usize - 1;
+                    }
+                    None => {
+                        self.pc = self.byte_code.len();
+                    }
+                },
                 0x80 => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
                         | ((self.byte_code[self.pc + 2] as u32) << 16)
