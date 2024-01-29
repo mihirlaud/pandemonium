@@ -1,10 +1,49 @@
 node HelloKarma {
+    fn main() -> int {
+        var s: [int; 6] = [5, 3, 14, 7, 8, 6];
 
-    fn main() -> char {
-        var arr: [char; 5] = ['H', 'e', 'l', 'l', 'o'];
+        var i: int = 0;
+        while i < 6 {
+            var a: int = print_int(s[i]);
+            a = print_char(' ');
 
-        arr[3] = 'p';
-        
-        return arr[3];
+            i = i + 1;
+        }
+
+        var b: int = print_char('-');
+        b = print_char('>');
+        b = print_char(' ');
+
+        var outer: int = 0;
+        while outer < 5 {
+            var inner: int = outer;
+            var min_value: int = s[outer];
+            var min_index: int = outer;
+
+            while inner < 6 {
+                if s[inner] < min_value {
+                    min_value = s[inner];
+                    min_index = inner;
+                }
+
+                inner = inner + 1;
+            }
+
+            var temp: int = s[outer];
+            s[outer] = min_value;
+            s[min_index] = temp;
+
+            outer = outer + 1;
+        }
+
+        i = 0;
+        while i < 6 {
+            var c: int = print_int(s[i]);
+            c = print_char(' ');
+
+            i = i + 1;
+        }
+
+        return 0;
     }
 }

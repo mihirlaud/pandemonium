@@ -602,10 +602,7 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
-                        | ((self.byte_code[self.pc + 6] as u32) << 16)
-                        | ((self.byte_code[self.pc + 7] as u32) << 8)
-                        | (self.byte_code[self.pc + 8] as u32);
+                    let idx = self.stack.pop_back().unwrap();
 
                     let addr = addr + 4 * idx;
 
@@ -616,7 +613,7 @@ impl NodeMachine {
 
                     self.stack.push_back(data);
 
-                    self.pc += 8;
+                    self.pc += 4;
                 }
                 0x83 => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -624,10 +621,7 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
-                        | ((self.byte_code[self.pc + 6] as u32) << 16)
-                        | ((self.byte_code[self.pc + 7] as u32) << 8)
-                        | (self.byte_code[self.pc + 8] as u32);
+                    let idx = self.stack.pop_back().unwrap();
 
                     let addr = addr + 4 * idx;
 
@@ -638,7 +632,7 @@ impl NodeMachine {
 
                     self.stack.push_back(data);
 
-                    self.pc += 8;
+                    self.pc += 4;
                 }
                 0x84 => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -646,10 +640,7 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
-                        | ((self.byte_code[self.pc + 6] as u32) << 16)
-                        | ((self.byte_code[self.pc + 7] as u32) << 8)
-                        | (self.byte_code[self.pc + 8] as u32);
+                    let idx = self.stack.pop_back().unwrap();
 
                     let addr = addr + idx;
 
@@ -657,7 +648,7 @@ impl NodeMachine {
 
                     self.stack.push_back(data);
 
-                    self.pc += 8;
+                    self.pc += 4;
                 }
                 0x85 => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -665,10 +656,7 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
-                        | ((self.byte_code[self.pc + 6] as u32) << 16)
-                        | ((self.byte_code[self.pc + 7] as u32) << 8)
-                        | (self.byte_code[self.pc + 8] as u32);
+                    let idx = self.stack.pop_back().unwrap();
 
                     let addr = addr + idx;
 
@@ -676,7 +664,7 @@ impl NodeMachine {
 
                     self.stack.push_back(data);
 
-                    self.pc += 8;
+                    self.pc += 4;
                 }
                 0x87 => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -684,12 +672,9 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
-                        | ((self.byte_code[self.pc + 6] as u32) << 16)
-                        | ((self.byte_code[self.pc + 7] as u32) << 8)
-                        | (self.byte_code[self.pc + 8] as u32);
-
+                    let idx = self.stack.pop_back().unwrap();
                     let data = self.stack.pop_back().unwrap();
+
                     let addr = addr + idx * 4;
 
                     self.memory[addr as usize] = ((data & 0xFF000000) >> 24) as u8;
@@ -697,7 +682,7 @@ impl NodeMachine {
                     self.memory[addr as usize + 2] = ((data & 0x0000FF00) >> 8) as u8;
                     self.memory[addr as usize + 3] = (data & 0x000000FF) as u8;
 
-                    self.pc += 8;
+                    self.pc += 4;
                 }
                 0x88 => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -705,10 +690,7 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
-                        | ((self.byte_code[self.pc + 6] as u32) << 16)
-                        | ((self.byte_code[self.pc + 7] as u32) << 8)
-                        | (self.byte_code[self.pc + 8] as u32);
+                    let idx = self.stack.pop_back().unwrap();
 
                     let data = self.stack.pop_back().unwrap();
                     let addr = addr + idx * 4;
@@ -718,7 +700,7 @@ impl NodeMachine {
                     self.memory[addr as usize + 2] = ((data & 0x0000FF00) >> 8) as u8;
                     self.memory[addr as usize + 3] = (data & 0x000000FF) as u8;
 
-                    self.pc += 8;
+                    self.pc += 4;
                 }
                 0x89 => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -726,17 +708,14 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
-                        | ((self.byte_code[self.pc + 6] as u32) << 16)
-                        | ((self.byte_code[self.pc + 7] as u32) << 8)
-                        | (self.byte_code[self.pc + 8] as u32);
+                    let idx = self.stack.pop_back().unwrap();
 
                     let data = self.stack.pop_back().unwrap();
                     let addr = addr + idx;
 
                     self.memory[addr as usize] = data as u8;
 
-                    self.pc += 8;
+                    self.pc += 4;
                 }
                 0x8A => {
                     let addr: u32 = ((self.byte_code[self.pc + 1] as u32) << 24)
@@ -744,36 +723,33 @@ impl NodeMachine {
                         | ((self.byte_code[self.pc + 3] as u32) << 8)
                         | (self.byte_code[self.pc + 4] as u32);
 
-                    let idx: u32 = ((self.byte_code[self.pc + 5] as u32) << 24)
-                        | ((self.byte_code[self.pc + 6] as u32) << 16)
-                        | ((self.byte_code[self.pc + 7] as u32) << 8)
-                        | (self.byte_code[self.pc + 8] as u32);
+                    let idx = self.stack.pop_back().unwrap();
 
                     let data = self.stack.pop_back().unwrap();
                     let addr = addr + idx;
 
                     self.memory[addr as usize] = data as u8;
 
-                    self.pc += 8;
+                    self.pc += 4;
                 }
                 0x90 => {
                     let a = self.stack.pop_back().unwrap();
                     let a = i32::from_be_bytes(a.to_be_bytes());
-                    println!("{a}");
+                    print!("{a}");
                 }
                 0x91 => {
                     let a = self.stack.pop_back().unwrap();
                     let a = f32::from_be_bytes(a.to_be_bytes());
-                    println!("{a}");
+                    print!("{a}");
                 }
                 0x92 => {
                     let a = self.stack.pop_back().unwrap() != 0;
-                    println!("{}", if a { "true" } else { "false" });
+                    print!("{}", if a { "true" } else { "false" });
                 }
                 0x93 => {
                     let a = self.stack.pop_back().unwrap();
                     let a = (a as u8) as char;
-                    println!("{a}");
+                    print!("{a}");
                 }
                 _ => {
                     println!("unrecognized opcode {opcode} !!! halting");
@@ -782,6 +758,8 @@ impl NodeMachine {
             }
             self.pc += 1;
         }
+        println!();
+        println!("END PROGRAM OUTPUT ----");
         println!("{:?}", self.stack);
         println!("{:?}", self.memory);
     }
