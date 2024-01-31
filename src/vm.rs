@@ -742,7 +742,6 @@ impl NodeMachine {
             }
             self.pc += 1;
         }
-        println!();
         println!("END PROGRAM OUTPUT ----");
         println!("{:?}", self.stack);
         println!("{:?}", self.memory);

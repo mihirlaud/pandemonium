@@ -1,45 +1,21 @@
 node HelloKarma {
     fn main() -> () {
-        var s: [int; 6] = [5, 3, 14, 7, 8, 6];
+        var matrix: [[int; 3]; 3] = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+        ];
 
         var i: int = 0;
-        while i < 6 {
-            print_int(s[i]);
-            print_char(' ');
+        while i < 3 {
+            var j: int = 0;
+            while j < 3 {
+                print_int(matrix[i][j]);
+                print_char(' ');
 
-            i = i + 1;
-        }
-
-        print_char('-');
-        print_char('>');
-        print_char(' ');
-
-        var outer: int = 0;
-        while outer < 5 {
-            var inner: int = outer;
-            var min_value: int = s[outer];
-            var min_index: int = outer;
-
-            while inner < 6 {
-                if s[inner] < min_value {
-                    min_value = s[inner];
-                    min_index = inner;
-                }
-
-                inner = inner + 1;
+                j = j + 1;
             }
-
-            var temp: int = s[outer];
-            s[outer] = min_value;
-            s[min_index] = temp;
-
-            outer = outer + 1;
-        }
-
-        i = 0;
-        while i < 6 {
-            print_int(s[i]);
-            print_char(' ');
+            println();
 
             i = i + 1;
         }
